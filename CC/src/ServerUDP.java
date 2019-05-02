@@ -1,6 +1,5 @@
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import javax.xml.crypto.Data;
+import java.io.*;
 import java.net.*;
 
 public class ServerUDP extends Thread {
@@ -8,10 +7,12 @@ public class ServerUDP extends Thread {
     private int serverPort;
     private int port;
     private InetAddress local = null;
+    private Pacote pac;
 
     public ServerUDP(int port,int sport){
         this.port=port;
         this.serverPort = sport;
+        this.pac = new Pacote();
     }
 
     public void run(){
@@ -25,13 +26,21 @@ public class ServerUDP extends Thread {
             ObjectOutputStream os = new ObjectOutputStream(outputStream);
             os.writeObject(pdu);
             os.flush();
+
+
             byte [] data = outputStream.toByteArray();
             DatagramPacket datagramPacket = new DatagramPacket(data,data.length,local,port);
+
+
             serversocket.send(datagramPacket);
-            serversocket.receive(datagramPacket);
+        
+
+
             if(datagramPacket.getLength()>0){
                 System.out.println("enviou");
             }
+
+
 
         } catch (SocketException e) {
             e.printStackTrace();
