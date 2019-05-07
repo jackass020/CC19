@@ -24,6 +24,7 @@ public class Pacote implements Serializable {
     }
 
 
+
     /*Métodos auxiliares*/
 
     /**

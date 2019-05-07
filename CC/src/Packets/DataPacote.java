@@ -13,7 +13,7 @@ public class DataPacote extends Pacote implements Serializable {
 
     private int seqN;
     private byte[] data;
-    private static final int SIZE = 10000;
+    private int SIZE;
 
     public DataPacote(int seqN, byte[] data, InetAddress addr, int port) throws IOException {
         super(I); this.seqN = seqN; this.data = data;
@@ -43,9 +43,9 @@ public class DataPacote extends Pacote implements Serializable {
     public static byte[] readData(DatagramPacket packet) {
         byte[] buffer = packet.getData();
         ByteArrayInputStream inputStream = new ByteArrayInputStream(buffer);
-        byte[] dataBuffer = new byte[SIZE];
+        byte[] dataBuffer = new byte[packet.getLength()-5];
         inputStream.skip(5);
-        inputStream.read(dataBuffer,0,SIZE);
+        inputStream.read(dataBuffer,0,packet.getLength()-5);
         return dataBuffer;
     }
 }

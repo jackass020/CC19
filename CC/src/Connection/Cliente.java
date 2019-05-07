@@ -5,6 +5,12 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.nio.Buffer;
+import java.util.ArrayList;
+import java.nio.Buffer;
+import java.util.HashMap;
+import java.util.Map;
+
 import Packets.*;
 
 
@@ -15,11 +21,13 @@ public class Cliente extends Thread implements  Serializable{
     private InetAddress addr ;
     private int serverport = 5000;
     private static final int SIZE=10000;
+    private Map<Integer,byte []> pacotesRecebidos;
 
 
     public Cliente(int port){
 
         try {
+            this.pacotesRecebidos = new HashMap<>();
             this.port=port;
             this.csocket = new DatagramSocket();
         } catch (SocketException e) {
@@ -61,24 +69,47 @@ public class Cliente extends Thread implements  Serializable{
 
                 csocket.receive(packet);
                 if(Pacote.readType(packet) == Pacote.FIN) break;
+
                 int seqN = DataPacote.readSeqN(packet);
-
-
-
-                byte data[] = DataPacote.readData(packet);
-                try {
-
-                    FileOutputStream f = new FileOutputStream("/home/joao/Desktop/nandhag.txt");
-                    f.write(data);
-                    f.flush();
-                    f.close();
-                }
-                catch (IOException e){
-                    e.printStackTrace();
-                }
-
+                pacotesRecebidos.put(seqN,DataPacote.readData(packet));
+                System.out.println("antes: "+pacotesRecebidos.get(1).length);
 
             }
+
+            System.out.println("antes: "+pacotesRecebidos.get(1).length);
+
+
+            int offset = 0;
+            int size= 0;
+
+
+            for(int i =1; i<=pacotesRecebidos.size();i++){
+                size +=pacotesRecebidos.get(i).length;
+            }
+
+            System.out.println("size " + size);
+
+            byte fulldata[] = new byte[size];
+
+            for(int i =1; i<=pacotesRecebidos.size();i++){
+
+                System.out.println("offset: "+offset);
+                System.arraycopy(pacotesRecebidos.get(i), 0, fulldata, offset,pacotesRecebidos.get(i).length);
+                offset+=pacotesRecebidos.get(i).length;
+            }
+
+            try {
+
+                FileOutputStream f = new FileOutputStream("/home/joao/Desktop/CC19/CC/src/nandhag.txt");
+                f.write(fulldata);
+                f.flush();
+                f.close();
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+
+
             System.out.println("Servidor: Conexão terminada");
 
 
