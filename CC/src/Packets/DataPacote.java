@@ -1,15 +1,19 @@
+package Packets;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 
 
-public class DataPacote extends Pacote {
+
+public class DataPacote extends Pacote implements Serializable {
 
     private int seqN;
     private byte[] data;
-    //public static final int SIZE = UDPFriendly.DATA_SIZE;
+    private static final int SIZE = 10000;
 
     public DataPacote(int seqN, byte[] data, InetAddress addr, int port) throws IOException {
         super(I); this.seqN = seqN; this.data = data;
@@ -24,7 +28,8 @@ public class DataPacote extends Pacote {
     }
 
     public int getSeqN() { return seqN; }
-    public byte[] getDados() { return data; }
+
+    public  byte[] getDados() { return data; }
 
     public static int readSeqN(DatagramPacket packet) {
         byte[] buffer = packet.getData();
@@ -34,14 +39,13 @@ public class DataPacote extends Pacote {
         inputStream.read(intBuffer,0,4);
         return byteArrayToInt(intBuffer);
     }
-    /*
+
     public static byte[] readData(DatagramPacket packet) {
         byte[] buffer = packet.getData();
         ByteArrayInputStream inputStream = new ByteArrayInputStream(buffer);
-        //byte[] dataBu ffer = new byte[SIZE];
+        byte[] dataBuffer = new byte[SIZE];
         inputStream.skip(5);
         inputStream.read(dataBuffer,0,SIZE);
         return dataBuffer;
     }
-    */
 }

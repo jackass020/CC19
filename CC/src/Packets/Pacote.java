@@ -1,7 +1,10 @@
+package Packets;
+
+import java.io.Serializable;
 import java.net.DatagramPacket;
 
 
-public class Pacote {
+public class Pacote implements Serializable {
 
     public static final byte I = 0;
     public static final byte ACK = 1;
